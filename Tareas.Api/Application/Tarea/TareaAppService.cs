@@ -25,17 +25,16 @@ namespace Tareas.Api.Application.Tarea
         #endregion
 
         #region Methods
-        public async Task<ActionResult<List<TaskDTO>>> CreateTask(CreateTasksDTO data)
+        public async Task<ActionResult<TaskDTO>> CreateTask(TaskDTO data)
         {
             try
             {
-                //Convertimos el DTO de entrada (data) a la entidad Tarea
-                List<Models.Tarea> tareas = _mapper.Map<List<Models.Tarea>>(data.Tasks);
-
+                //Convertimos el DTO de entrada a la entidad Tarea
+                var tareas = _mapper.Map<Models.Tarea>(data);
                 var resultEntity = await _tareaDomainService.CreateTasks(tareas);
                 //Convertimos la entidad resultante de vuelta a un DTO
-                List<TaskDTO> resultDTOs = _mapper.Map<List<TaskDTO>>(resultEntity);
-                return new OkObjectResult(resultDTOs);
+                //List<TaskDTO> resultDTOs = _mapper.Map<List<TaskDTO>>(resultEntity);
+                return new OkObjectResult(resultEntity);
 
             }
             catch (Exception ex)
@@ -94,7 +93,7 @@ namespace Tareas.Api.Application.Tarea
                     return new BadRequestObjectResult(ResponseMessages.InvalidGuid);
                 }
                 var updatedTask = await _tareaDomainService.UpdateTask(taskDTO);             
-                return new OkObjectResult(new { updatedTask.Id, message = ResponseMessages.UpdateSuccess });
+                return new OkObjectResult(new { updatedTask, message = ResponseMessages.UpdateSuccess });
 
             }
             catch (Exception ex)
@@ -114,7 +113,7 @@ namespace Tareas.Api.Application.Tarea
                 var response = await _tareaDomainService.DeleteTask(id);
                 if(response != null)
                 {
-                    return new OkObjectResult(new {ID = response.Id, message = ResponseMessages.UpdateSuccess });
+                    return new OkObjectResult(new {ID = response.Id, message = ResponseMessages.DeletionSuccess });
                 }
                 else
                 {
@@ -124,6 +123,36 @@ namespace Tareas.Api.Application.Tarea
             catch(Exception ex)
             {
                 return new BadRequestObjectResult(new { error = ResponseMessages.ErrorDeletingTask, detail = ex.Message });
+            }
+        }
+
+        public async Task<ActionResult<List<TaskDTO>>> GetPagedTasks(int pageIndex = 1, int pageSize = 10)
+        {
+            try
+            {
+                int totalTasks = await _tareaDomainService.GetTaskCount();
+                int totalPages = (int)Math.Ceiling(totalTasks / (double)pageSize);
+
+                var task = await _tareaDomainService.GetAllTask()
+                            .Skip((pageIndex - 1)* pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+                var tasksDTOs = _mapper.Map<List<TaskDTO>>(task);
+
+                var response = new PagedTasksResponse
+                {
+                    Data = tasksDTOs,
+                    TotalItems = totalTasks,
+                    TotalPages = totalPages,
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize
+                };
+                return new OkObjectResult(response);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(new { error = ResponseMessages.ErrorGettingTasks, detail = ex.Message });
+
             }
         }
         #endregion

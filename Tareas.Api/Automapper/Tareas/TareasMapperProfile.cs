@@ -9,9 +9,7 @@ namespace Tareas.Api.Automapper.Tareas
         public TareasMapperProfile() 
         {
             CreateMap<TaskDTO, Tarea>(); // Mapeo desde el DTO a la entidad
-            CreateMap<Tarea, TaskDTO>(); // Mapeo desde la entidad al DTO
-            //CreateMap<Tarea, TaskDTO>();// Mapeo desde la entidad al DTO
-            //CreateMap<Tarea, TaskDTO>();
+            CreateMap<Tarea, TaskDTO>(); // Mapeo desde la entidad al DTO            
         }
     }
 }

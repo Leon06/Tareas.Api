@@ -25,13 +25,13 @@ namespace Tareas.Api.Controllers
         #region Methods
 
         /// <summary>
-        /// Crea una o varias tareas en el sistema.
+        /// Crea una tarea en el sistema.
         /// </summary>
         /// <param name="data">Información de las tareas a crear.</param>        
         /// <returns>Lista de tareas creadas.</returns>
         [HttpPost]
         [Route(nameof(TareaController.CreateTask))]
-        public async Task<ActionResult<List<TaskDTO>>> CreateTask(CreateTasksDTO data )
+        public async Task<ActionResult<TaskDTO>> CreateTask(TaskDTO data)
         {
             return await _tareaAppService.CreateTask(data);
         }
@@ -82,6 +82,21 @@ namespace Tareas.Api.Controllers
         {
             return await _tareaAppService.DeleteTask(id);
         }
+
+        /// <summary>
+        /// Obtiene todas las tareas existentes en el sistema por paginacion
+        /// </summary>
+        /// <param name="pageIndex">Identificador de ...</param>
+        /// /// <param name="pageSize">Identificador de ...</param>
+        /// <returns>Resultado de la operación de eliminación.</returns>
+        [HttpGet]
+        [Route(nameof(TareaController.GetPagedTasks))]
+        public async Task<ActionResult<List<TaskDTO>>> GetPagedTasks(int pageIndex = 1, int pageSize = 10)
+        {
+            return await _tareaAppService.GetPagedTasks(pageIndex, pageSize);
+        }
+
+
         #endregion
     }
 }

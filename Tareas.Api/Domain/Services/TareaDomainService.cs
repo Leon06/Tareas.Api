@@ -20,22 +20,19 @@ namespace Tareas.Api.Domain.Services
         #endregion
 
         #region Methods
-        public async Task<List<Tarea>> CreateTasks(List<Tarea> tareas)
-        {
-            foreach (var tarea in tareas)
-            {
-                tarea.Id = tarea.Id == Guid.Empty ? Guid.NewGuid() : tarea.Id;
-                tarea.FechaCreacion = tarea.FechaCreacion == DateTime.MinValue ? DateTime.Now : tarea.FechaCreacion;
-                
-            }
-            _context.Tareas.AddRange(tareas);
+        public async Task<Tarea> CreateTasks(Tarea tarea)
+        {         
+            tarea.Id = tarea.Id == Guid.Empty ? Guid.NewGuid() : tarea.Id;
+            tarea.FechaCreacion = tarea.FechaCreacion == DateTime.MinValue ? DateTime.Now : tarea.FechaCreacion;                
+            
+            _context.Tareas.Add(tarea);
             await _context.SaveChangesAsync();
-            return tareas;
+            return tarea;
         }
 
         public IQueryable<Tarea> GetAllTask()
         {
-            return _context.Tareas;
+            return _context.Tareas.OrderByDescending(x => x.FechaCreacion);
         }
 
         public async Task<Tarea?> GetTask(Guid id)
@@ -72,6 +69,11 @@ namespace Tareas.Api.Domain.Services
             await _context.SaveChangesAsync();
             return tareaToDelete;
         }
+        public async Task<int> GetTaskCount()
+        {
+            return await _context.Tareas.CountAsync();
+        }
+
         #endregion
 
     }

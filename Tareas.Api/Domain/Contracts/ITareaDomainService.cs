@@ -6,9 +6,9 @@ namespace Tareas.Api.Domain.Contracts
     public interface ITareaDomainService
     {
         /// <summary>
-        /// Crea una o varias tareas en el sistema.
+        /// Crea una tarea en el sistema.
         /// </summary>     
-        Task<List<Tarea>> CreateTasks(List<Tarea> tareas);
+        Task<Tarea> CreateTasks(Tarea tarea);
 
         /// <summary>
         /// Obtiene todas las tareas existentes en el sistema.
@@ -29,5 +29,7 @@ namespace Tareas.Api.Domain.Contracts
         /// Elimina una tarea específica del sistema.
         /// </summary>      
         Task<Tarea?> DeleteTask(Guid id);
+
+        Task<int> GetTaskCount();
     }
 }

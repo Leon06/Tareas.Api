@@ -6,10 +6,10 @@ namespace Tareas.Api.Application.Contracts
     public interface ITareaAppService
     {
         /// <summary>
-        /// Crea una o varias tareas en el sistema.
+        /// Crea una tarea en el sistema.
         /// </summary>
         /// <returns></returns>
-        Task<ActionResult<List<TaskDTO>>> CreateTask(CreateTasksDTO data);
+        Task<ActionResult<TaskDTO>> CreateTask(TaskDTO data);
 
         /// <summary>
         /// Obtiene todas las tareas existentes en el sistema.
@@ -34,5 +34,7 @@ namespace Tareas.Api.Application.Contracts
         /// </summary>
         /// <returns></returns>
         Task<IActionResult> DeleteTask(Guid id);
+
+        Task<ActionResult<List<TaskDTO>>> GetPagedTasks(int pageIndex = 1, int pageSize = 10);
     }
 }
